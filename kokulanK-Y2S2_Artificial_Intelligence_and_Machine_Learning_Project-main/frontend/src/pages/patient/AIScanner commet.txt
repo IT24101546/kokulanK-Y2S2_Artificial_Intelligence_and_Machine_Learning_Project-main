@@ -1,0 +1,155 @@
+
+  `
+  const handleAnalyze = async () => {
+    if (!imageFile) return;
+    setLoading(true);
+    const formData = new FormData();
+    formData.append('image', imageFile);
+    formData.append('analysisResult', 'Analysis complete: No significant issues detected (demo).');
+    try {
+      const { data } = await api.post('/skin-images', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      setResult(data.analysisResult);
+      fetchPastImages();
+    } catch (error) {
+      console.error('Upload failed', error);
+      setResult('Upload failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRemove = () => {
+    if (image) URL.revokeObjectURL(image);
+    setImage(null);
+    setImageFile(null);
+    setResult(null);
+  };
+
+  const handleCancelCamera = () => stopCamera();
+  const handleViewPastImage = (img) => setSelectedPastImage(img);
+
+  const handleDeletePastImage = async (id) => {
+    if (!window.confirm('Delete this image?')) return;
+    try {
+    await api.delete(`/skin-images/${id}`);
+      fetchPastImages();
+      if (selectedPastImage && selectedPastImage._id === id) setSelectedPastImage(null);
+    } catch (error) {
+      console.error('Delete failed', error);
+    }
+  };`
+
+
+
+<style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@400;500;600&display=swap');
+        .scanner-root { font-family: 'DM Sans', sans-serif; }
+        .display-font { font-family: 'Fraunces', serif; }
+
+        .hero-scanner {
+          background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #1d4ed8 100%);
+        }
+
+        .drop-zone {
+          transition: all 0.2s ease;
+          border: 2.5px dashed #d1d5db;
+        }
+        .drop-zone.active {
+          border-color: #3b82f6;
+          background: #eff6ff;
+        }
+        .drop-zone:hover {
+          border-color: #93c5fd;
+          background: #f8faff;
+        }
+
+        .action-btn {
+          transition: all 0.2s ease;
+          font-weight: 500;
+          font-size: 0.9rem;
+          border-radius: 12px;
+          padding: 11px 20px;
+          cursor: pointer;
+          border: none;
+        }
+        .btn-primary {
+          background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+          color: white;
+          box-shadow: 0 4px 14px rgba(59,130,246,0.35);
+        }
+        .btn-primary:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+        .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+
+        .btn-violet {
+          background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+          color: white;
+          box-shadow: 0 4px 14px rgba(139,92,246,0.3);
+        }
+        .btn-violet:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        .btn-secondary {
+          background: white;
+          color: #6b7280;
+          border: 1.5px solid #e5e7eb !important;
+        }
+        .btn-secondary:hover { background: #f9fafb; }
+
+        .btn-green {
+          background: linear-gradient(135deg, #059669, #10b981);
+          color: white;
+          box-shadow: 0 4px 14px rgba(16,185,129,0.3);
+        }
+        .btn-green:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        .btn-danger {
+          background: linear-gradient(135deg, #dc2626, #ef4444);
+          color: white;
+          box-shadow: 0 4px 12px rgba(239,68,68,0.25);
+        }
+        .btn-danger:hover { opacity: 0.9; }
+
+        .scan-card {
+          transition: transform 0.2s, box-shadow 0.2s;
+          cursor: pointer;
+        }
+        .scan-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,0,0,0.1); }
+
+        .modal-overlay { animation: fadeIn 0.2s ease; }
+        .modal-box { animation: slideUp 0.25s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .result-card {
+          background: linear-gradient(135deg, #eff6ff, #f0fdf4);
+          border: 1.5px solid #bfdbfe;
+        }
+
+        .pulse-ring {
+          animation: pulseRing 2s infinite;
+        }
+        @keyframes pulseRing {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(59,130,246,0.3); }
+          50% { box-shadow: 0 0 0 8px rgba(59,130,246,0); }
+        }
+
+        .fade-in { animation: fadeUp 0.4s ease forwards; opacity: 0; }
+        .fade-in:nth-child(1) { animation-delay: 0.04s; }
+        .fade-in:nth-child(2) { animation-delay: 0.10s; }
+        .fade-in:nth-child(3) { animation-delay: 0.16s; }
+        .fade-in:nth-child(4) { animation-delay: 0.22s; }
+        @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+        .loading-bar {
+          height: 3px;
+          background: linear-gradient(90deg, #3b82f6, #8b5cf6, #3b82f6);
+          background-size: 200% 100%;
+          animation: loadingAnim 1.4s linear infinite;
+          border-radius: 2px;
+        }
+        @keyframes loadingAnim {
+          0% { background-position: 200% 0; }
+          100% { background-position: -200% 0; }
+        }
+    `}</style>
